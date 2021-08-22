@@ -1,4 +1,4 @@
-function injector(str){
+function playlistsInjector(str){
 
 	let dropdownOption = document.createElement('div');
 	let playlistsButton = document.createElement('div');
@@ -362,7 +362,7 @@ if(!window.bonkCodeInjectors)
 window.bonkCodeInjectors = [];
 window.bonkCodeInjectors.push(bonkCode => {
 	try {
-		return injector(bonkCode);
+		return playlistsInjector(bonkCode);
 	} catch (error) {
 		alert(
 `Whoops! Playlists was unable to load.
