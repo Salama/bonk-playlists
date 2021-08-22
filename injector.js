@@ -305,26 +305,34 @@ else if (w3p[0][0] == "playlists") {
 					document.getElementById("maploadwindowmapscontainer").firstChild.remove();
 				}
 				document.getElementById("maploadwindowstatustext").style.visibility = "inherit";
-				$[w3p[6][656]](S9L.W1E(3382), {
-					token: G3p[5],
-					startingfrom: G3p[80] * 32
-				}) [w3p[6][655]](function (h0i, Y0i) {
-					S9L.X9L();
-					var d3p = [
-						arguments
-					];
-					d3p[5] = y3uu;
-					if (d3p[0][0][d3p[5][61]] != S9L.W1E(1936)) {
-						e9W(S9L.C1E(3380));
-					} else if (d3p[0][0][d3p[5][61]] == S9L.W1E(1936)) {
-						let filteredMapList = d3p[0][0];
-						filteredMapList.maps = filteredMapList.maps.map(e => {if(list.maps.includes(e.id)) {return e;}}).sort().slice(0, list.maps.length);
-						filteredMapList.maps = filteredMapList.maps.concat(list.b1maps);
-						document.getElementById("maploadwindowstatustext").style.visibility = "hidden";
+				let addMaps = (offset = 0) => {
+					$[w3p[6][656]](S9L.W1E(3382), {
+						token: G3p[5],
+						startingfrom: offset * 32
+					}) [w3p[6][655]](function (h0i, Y0i) {
+						S9L.X9L();
+						var d3p = [
+							arguments
+						];
+						d3p[5] = y3uu;
+						if (d3p[0][0][d3p[5][61]] != S9L.W1E(1936)) {
+							e9W(S9L.C1E(3380));
+						} else if (d3p[0][0][d3p[5][61]] == S9L.W1E(1936)) {
+							let filteredMapList = d3p[0][0];
+							filteredMapList.maps = filteredMapList.maps.map(e => {if(list.maps.includes(e.id)) {return e;}}).sort().slice(0, list.maps.length);
+							document.getElementById("maploadwindowstatustext").style.visibility = "hidden";
 
-						t7W(filteredMapList);
-					}
-				})
+							t7W(filteredMapList);
+							if(d3p[0][0].more) {
+								addMaps(offset + 1);
+							}
+							else {
+								t7W({r: "success", maps: list.b1maps, more: false});
+							}
+						}
+					})
+				}
+				addMaps();
 			}
 			else if(list.maps === "new") {
 				document.getElementById("maploadwindowmapscontainer").insertBefore(playlistCreator(), playlist);
