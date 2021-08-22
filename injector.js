@@ -172,6 +172,7 @@ else if (w3p[0][0] == "playlists") {
 		description.classList.add("maploadwindowtextcomment_picks");
 		description.placeholder = "Playlist Description";
 		description.style.top = "150px";
+		description.style.height = "60px";
 		description.style.height = "19px";
 		description.value = list.description;
 
@@ -247,6 +248,7 @@ else if (w3p[0][0] == "playlists") {
 		description.classList.add("maploadwindowtext_picks");
 		description.classList.add("maploadwindowtextcomment_picks");
 		description.style.top = "150px";
+		description.style.height = "60px";
 		description.innerText = list.description;
 
 		if(list.maps !== "new") {
