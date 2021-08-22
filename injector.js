@@ -299,7 +299,7 @@ else if (w3p[0][0] == "playlists") {
 		playlist.appendChild(title);
 		playlist.appendChild(description);
 		playlist.onclick = (e) => {
-			if(list.maps.length > 0 && list.maps !== "new") {
+			if((list.maps.length + list.b1maps.length) > 0 && list.maps !== "new") {
 				if(e.target.classList.contains("brownButton")) return;
 				while(document.getElementById("maploadwindowmapscontainer").firstChild) {
 					document.getElementById("maploadwindowmapscontainer").firstChild.remove();
