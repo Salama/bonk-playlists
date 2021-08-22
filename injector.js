@@ -62,7 +62,7 @@ if (t7V[7][0] == "/p") {
 			d8I("Playlist index must be between 0 and " + (playlists.length - 1), "#cc3333", true);
 		}
 		else {
-			if(j0V[23].map.m.dbv === 2) {
+			if(j0V[23].map.m.dbv === 2 && j0V[23].map.m.date != undefined) {
 				if(playlists[t7V[7][1]].maps.includes(j0V[23].map.m.dbid)) {
 					playlists[t7V[7][1]].maps.splice(playlists[t7V[7][1]].maps.indexOf(j0V[23].map.m.dbid), 1);
 					d8I("* Map removed from playlist", "#cc3333", true);
@@ -75,7 +75,7 @@ if (t7V[7][0] == "/p") {
 			}
 			else {
 				if(playlists[t7V[7][1]].b1maps.map(e => {return e.id}).includes(j0V[23].map.m.dbid)) {
-					playlists[t7V[7][1]].b1maps.splice(playlists[t7V[7][1]].b1maps.map(e => {return e.id}).indexOf(j0V[23].map.m.dbid));
+					playlists[t7V[7][1]].b1maps.splice(playlists[t7V[7][1]].b1maps.map(e => {return e.id}).indexOf(j0V[23].map.m.dbid), 1);
 					d8I("* Map removed from playlist", "#cc3333", true);
 				}
 				else {
@@ -91,8 +91,8 @@ if (t7V[7][0] == "/p") {
 						remixdb: j0V[23].map.m.rxdb,
 						remixid: j0V[23].map.m.rxid
 					}
-					if(j0V[23].map.m.date == "" || j0V[23].map.m.vu * 1 != j0V[23].map.m.vu || j0V[23].map.m.vd * 1 != j0V[23].map.m.vd) {
-						d8I("* Map could not be added to the playlist! To save Bonk 1 maps, you need to select the map by yourself without starting the game.", "#cc3333", true);
+					if(j0V[23].map.m.date + "" !== j0V[23].map.m.date || j0V[23].map.m.vu * 1 != j0V[23].map.m.vu || j0V[23].map.m.vd * 1 != j0V[23].map.m.vd) {
+						d8I("* Map could not be added to the playlist! To add Bonk 1 maps, you need to select the map from by yourself without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added to a playlist.", "#cc3333", true);
 					}
 					else {
 						playlists[t7V[7][1]].b1maps.push(b1map);
