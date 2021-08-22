@@ -92,7 +92,7 @@ if (t7V[7][0] == "/p") {
 						remixid: j0V[23].map.m.rxid
 					}
 					if(j0V[23].map.m.date === "" || j0V[23].map.m.vu === undefined || j0V[23].map.m.vd === undefined) {
-						d8I("* Map could not be added to the playlist! To save bonk 1 maps, you need to select the map by yourself without starting the game.", "#cc3333", true);
+						d8I("* Map could not be added to the playlist! To save Bonk 1 maps, you need to select the map by yourself without starting the game.", "#cc3333", true);
 					}
 					else {
 						playlists[t7V[7][1]].b1maps.push(b1map);
