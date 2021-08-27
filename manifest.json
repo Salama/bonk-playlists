@@ -6,10 +6,18 @@
 
 	"description": "Adds map playlists to bonk.io",
 
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "playlists@salama.xyz"
+		}
+	},
+
 	"permissions": [
 		"webRequest",
 		"webRequestBlocking",
-		"*://bonk.io/*"
+		"*://bonk.io/*",
+		"storage",
+		"unlimitedStorage"
 	],
 
 	"background": {
