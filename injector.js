@@ -1,4 +1,10 @@
 function playlistsInjector(str){
+	
+	document.addEventListener("returnPlaylists", (e) => {
+		localStorage.setItem("playlists", e.detail);
+	})
+	var letPlaylistsEventEvent = new CustomEvent('storePlaylists', {"detail":["get"]});
+	document.dispatchEvent(letPlaylistsEventEvent);
 
 	let dropdownOption = document.createElement('div');
 	let playlistsButton = document.createElement('div');
@@ -101,6 +107,7 @@ if (t7V[7][0] == "/p") {
 				}
 			}
 			localStorage.setItem("playlists", JSON.stringify(playlists));
+			document.dispatchEvent(new CustomEvent('storePlaylists', {"detail":["set", JSON.stringify(playlists)]}));
 		}
 	}
 	else {
@@ -216,6 +223,7 @@ else if (w3p[0][0] == "playlists") {
 				playlists[playlists.indexOf(list)] = Object.assign(playlists[playlists.indexOf(list)], {name: title.value, description: description.value, image: encodedImage === undefined ? list.image : encodedImage});
 			}
 			localStorage.setItem("playlists", JSON.stringify(playlists));
+			document.dispatchEvent(new CustomEvent('storePlaylists', {"detail":["set", JSON.stringify(playlists)]}));
 			document.getElementById("maploadtypedropdownoptionplaylists").click();
 		};
 
@@ -268,6 +276,7 @@ else if (w3p[0][0] == "playlists") {
 				playlist.style.pointerEvents = "none";
 				playlists.splice(playlists.indexOf(list), 1);
 				localStorage.setItem("playlists", JSON.stringify(playlists));
+				document.dispatchEvent(new CustomEvent('storePlaylists', {"detail":["set", JSON.stringify(playlists)]}));
 			}
 
 			let editButton = document.createElement("div");
