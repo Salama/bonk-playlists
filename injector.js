@@ -64,7 +64,10 @@ if (t7V[7][0] == "/p") {
 		}
 	}
 	else if(!isNaN(t7V[7][1])) {
-		if(t7V[7][1] < 0 || t7V[7][1] > playlists.length) {
+		if(t7V[7][1] < 0 || t7V[7][1] >= playlists.length) {
+			if(playlists.length === 0) {
+				d8I("You don't have any playlists!", "#cc3333", true);
+			}
 			d8I("Playlist index must be between 0 and " + (playlists.length - 1), "#cc3333", true);
 		}
 		else {
