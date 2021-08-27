@@ -49,10 +49,16 @@ function playlistsInjector(str){
 	//Hide back button when a dropdown menu item is selected. It will be made visible later
 	newStr = newStr.replace(`function t9W(n7i){`, `function t9W(n7i){document.getElementById("maploadwindowplaylistbutton").style.display="none";`);
 
+	//Prevent playlists from appearing when scrolling
+	newStr = newStr.replace(`if(G3p[49] == S9L.W1E(3351) || G3p[49] == S9L.C1E(3368) || G3p[49] == S9L.C1E(3352))`, PLAYLIST_SCROLL);
+
 	if(str === newStr) throw "Injection failed!";
 	console.log("Playlists injector run");
 	return newStr;
 }
+
+const PLAYLIST_SCROLL = `
+if(G3p[49] == "playlists") {return;} else if(G3p[49] == S9L.W1E(3351) || G3p[49] == S9L.C1E(3368) || G3p[49] == S9L.C1E(3352))`;
 
 const PLAYLIST_COMMANDS = `
 if (t7V[7][0] == "/p") {
