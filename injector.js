@@ -44,7 +44,7 @@ function playlistsInjector(str){
 	newStr = newStr.replace(`else if(w3p[0][0] == S9L.C1E(3353)){G3p[81]=false;`, GET_PLAYLISTS);
 
 	//Add commands
-	newStr = newStr.replace(`if(t7V[7][0] == S9L.W1E(1868)){`, PLAYLIST_COMMANDS);
+	newStr = newStr.replace(`if(t7V[7][0] == S9L.W1E(1868`, PLAYLIST_COMMANDS);
 
 	//Hide back button when a dropdown menu item is selected. It will be made visible later
 	newStr = newStr.replace(`function t9W(n7i){`, `function t9W(n7i){document.getElementById("maploadwindowplaylistbutton").style.display="none";`);
@@ -125,7 +125,7 @@ if (t7V[7][0] == "/p") {
 		d8I("/p [index]", "#cc3333", true);
 	}
 }
-else if(t7V[7][0] == S9L.W1E(1868)){`;
+else if(t7V[7][0] == S9L.W1E(1868`;
 
 const DROPDOWN_CLICK = `
 if (i1p[0][0][i1p[1][1008]] == document.getElementById("maploadtypedropdownoptionplaylists")) {

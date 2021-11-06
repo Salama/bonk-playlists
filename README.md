@@ -3,6 +3,9 @@ A browser extension to add playlists to bonk.io
 
 [Discord link](https://discord.gg/Dj6usq7ww3)
 
+## Warning
+  If you're using incognito mode, your playlists may not be saved. As an alternative, you can use the [persistent branch](https://github.com/Salama/bonk-playlists/tree/persistent)
+
 ## Features
 * /p command
 * Playlists in the map selector
