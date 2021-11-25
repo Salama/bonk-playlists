@@ -1,20 +1,54 @@
 function playlistsInjector(str){
-
 	let dropdownOption = document.createElement('div');
 	let playlistsButton = document.createElement('div');
+	let importButton = document.createElement('div');
+	let exportButton = document.createElement('div');
 	//Insert before favs
 	document.getElementById("maploadtypedropdown").insertBefore(dropdownOption, document.getElementById("maploadtypedropdownoption1"));
 	document.getElementById("maploadwindow").appendChild(playlistsButton);
+	document.getElementById("maploadwindow").appendChild(importButton);
+	document.getElementById("maploadwindow").appendChild(exportButton);
 
 	dropdownOption.outerHTML = `<div class="dropdown-option dropdown_classic" id="maploadtypedropdownoptionplaylists" style="display: none;">MY PLAYLISTS</div>`;
 	playlistsButton.outerHTML = `<div class="brownButton brownButton_classic buttonShadow" id="maploadwindowplaylistbutton" onclick="document.getElementById(&quot;maploadtypedropdownoptionplaylists&quot;).click();" style="position: absolute; left: 210px; line-height: 23px; height: 23px; width: 75px; top: 57px; display: block;">BACK</div>`;
+	importButton.outerHTML = `<div class="brownButton brownButton_classic buttonShadow" id="maploadwindowplaylistimport" style="position: absolute; left: 290px; line-height: 23px; height: 23px; width: 75px; top: 57px; display: block;">IMPORT</div>`;
+	exportButton.outerHTML = `<div class="brownButton brownButton_classic buttonShadow" id="maploadwindowplaylistexport" style="position: absolute; left: 370px; line-height: 23px; height: 23px; width: 75px; top: 57px; display: block;">EXPORT</div>`;
+
+	document.getElementById("maploadwindowplaylistexport").addEventListener("click", () => {
+		let a = document.createElement("a");
+		document.body.appendChild(a);
+		a.href = window.URL.createObjectURL(new Blob([JSON.stringify(localStorage.getItem("playlists"))], {type: "oclet/stream"}));
+		a.download = "playlists.txt";
+		a.click();
+		document.body.removeChild(a);
+	})
+
+	document.getElementById("maploadwindowplaylistimport").addEventListener("click", () => {
+		let a = document.createElement("input");
+		a.type = 'file';
+		document.body.appendChild(a);
+		a.onchange = e => {
+			let file = e.target.files[0];
+			let reader = new FileReader();
+			reader.readAsText(file);
+			reader.onload = readerEvent => {
+				localStorage.setItem("playlists", readerEvent.target.result);
+			}
+		};
+		a.click();
+		document.body.removeChild(a);
+	})
 
 	document.getElementById("newbonklobby_mapbutton").addEventListener("click", () => {
 		if(document.getElementById("maploadtypedropdowntitle").innerText === "MY PLAYLISTS") {
 			document.getElementById("maploadwindowplaylistbutton").style.display = "block";
+			document.getElementById("maploadwindowplaylistimport").style.display = "block";
+			document.getElementById("maploadwindowplaylistexport").style.display = "block";
 		}
 		else {
 			document.getElementById("maploadwindowplaylistbutton").style.display = "none";
+			document.getElementById("maploadwindowplaylistimport").style.display = "none";
+			document.getElementById("maploadwindowplaylistexport").style.display = "none";
 		}
 	});
 
@@ -41,7 +75,10 @@ function playlistsInjector(str){
 	newStr = newStr.replace(`if(t7V[7][0] == S9L.W1E(1868`, PLAYLIST_COMMANDS);
 
 	//Hide back button when a dropdown menu item is selected. It will be made visible later
-	newStr = newStr.replace(`function t9W(n7i){`, `function t9W(n7i){document.getElementById("maploadwindowplaylistbutton").style.display="none";`);
+	newStr = newStr.replace(`function t9W(n7i){`, `function t9W(n7i){
+		document.getElementById("maploadwindowplaylistbutton").style.display="none";
+		document.getElementById("maploadwindowplaylistimport").style.display="none";
+		document.getElementById("maploadwindowplaylistexport").style.display="none";`);
 
 	//Prevent playlists from appearing when scrolling
 	newStr = newStr.replace(`if(G3p[49] == S9L.W1E(3351) || G3p[49] == S9L.C1E(3368) || G3p[49] == S9L.C1E(3352))`, PLAYLIST_SCROLL);
@@ -125,6 +162,8 @@ if (i1p[0][0][i1p[1][1008]] == document.getElementById("maploadtypedropdownoptio
 	G3p[67][i1p[1][1036]] = document.getElementById("maploadtypedropdownoptionplaylists")[i1p[1][1036]];
 	R9W("playlists", true);
 	document.getElementById("maploadwindowplaylistbutton").style.display = "block";
+	document.getElementById("maploadwindowplaylistimport").style.display = "block";
+	document.getElementById("maploadwindowplaylistexport").style.display = "block";
 	G3p[76][i1p[1][459]][i1p[1][458]] = S9L.W1E(820);
 	G3p[64][i1p[1][459]][i1p[1][458]] = S9L.W1E(820);
   }
