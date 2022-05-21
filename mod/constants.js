@@ -346,7 +346,10 @@ const PLAYLIST_SCROLL = `
 if(o0k[65] == "playlists") {return;} else if(o0k[65] == G9b.A43(3378) || o0k[65] == G9b.z43(3395) || o0k[65] == G9b.z43(3379))`;
 
 const PLAYLIST_COMMANDS = `
-if (I8H[5][0] == "/p") {
+if (I8H[5][0].startsWith("/p") && !Number.isNaN(Number(I8H[5][0].substr(2)))) {
+	if(!I8H[5][1]) {
+		I8H[5][1] = !Number.isNaN(Number(I8H[5][0].substr(2)));
+	}
 	if(I8H[5][1] == "list") {
 		F5S("Saved playlists", "#cc3333", true);
 		for(let i = 0; i < window.playlists.playlists.length; i++) {
