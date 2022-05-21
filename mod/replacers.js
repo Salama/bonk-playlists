@@ -21,8 +21,13 @@ newStr = newStr.replace(`if(I8H[5][0] == G9b.z43(1869`, PLAYLIST_COMMANDS);
 //Hide back button when a dropdown menu item is selected. It will be made visible later
 newStr = newStr.replace(`function n7h(R3E){`, `function n7h(R3E){
     document.getElementById("maploadwindowplaylistbutton").style.display="none";
-    document.getElementById("maploadwindowplaylistimport").style.display="none";
-    document.getElementById("maploadwindowplaylistexport").style.display="none";`);
+    document.getElementById("maploadwindowtoolbox").style.display="none";`);
 
 //Prevent playlists from appearing when scrolling
 newStr = newStr.replace(`if(o0k[65] == G9b.A43(3378) || o0k[65] == G9b.z43(3395) || o0k[65] == G9b.z43(3379))`, PLAYLIST_SCROLL);
+
+//Get token
+newStr = newStr.replace(`o0k[7]=o0k[0][0];`, `o0k[7]=o0k[0][0];window.playlists.setToken(o0k[0][0]);`);
+
+//Disable fav
+newStr = newStr.replace(`var n8H`, `if(window.playlists.autofav){F5S("* Favoriting maps while autofav is on has been disabled because it can cause problems", "#cc3333", true);return;}` + `var n8H`);
