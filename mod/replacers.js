@@ -34,3 +34,10 @@ newStr = newStr.replace(`var n8H`, `if(window.playlists.autofav){F5S("* Favoriti
 
 //Add playlists command to help message
 newStr = newStr.replace('u6H[29][I8H[1][644]](G9b.A43(1897),G9b.z43(1871),false);', 'u6H[29][I8H[1][644]](G9b.A43(1897),G9b.z43(1871),false);u6H[29].showStatusMessage("/p - commands from playlists mod","#cc3333",false);');
+
+//Remove no maps message when using playlists
+const noMaps = [...new Set(newStr.match(/W7h\(...\....\(3430\)\)/g))];
+
+for(let message of noMaps) {
+    newStr = newStr.replaceAll(message, `if(document.getElementById("maploadtypedropdowntitle").textContent !== "MY PLAYLISTS")` + message);
+}
