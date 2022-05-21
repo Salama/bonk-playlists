@@ -31,3 +31,6 @@ newStr = newStr.replace(`o0k[7]=o0k[0][0];`, `o0k[7]=o0k[0][0];window.playlists.
 
 //Disable fav
 newStr = newStr.replace(`var n8H`, `if(window.playlists.autofav){F5S("* Favoriting maps while autofav is on has been disabled because it can cause problems", "#cc3333", true);return;}` + `var n8H`);
+
+//Add playlists command to help message
+newStr = newStr.replace('u6H[29][I8H[1][644]](G9b.A43(1897),G9b.z43(1871),false);', 'u6H[29][I8H[1][644]](G9b.A43(1897),G9b.z43(1871),false);u6H[29].showStatusMessage("/p - commands from playlists mod","#cc3333",false);');
