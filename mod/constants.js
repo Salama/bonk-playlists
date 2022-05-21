@@ -1,6 +1,7 @@
 window.playlists = {};
 window.playlists.edit = false;
 window.playlists.autofav = false;
+window.playlists.editing = false;
 let token = null;
 window.playlists.merge = {
 	enabled: false,
@@ -238,6 +239,7 @@ document.getElementById("maploadwindowplaylistautofav").addEventListener("click"
 });
 
 document.getElementById("maploadwindowplaylistedit").addEventListener("click", e => {
+	window.playlists.editing = false;
 	window.playlists.edit = !window.playlists.edit;
 	if(window.playlists.edit) {
 		document.getElementById("maploadwindowplaylistmerge").classList.add("brownButtonDisabled");
@@ -489,6 +491,7 @@ else if (I0k[0][0] == "playlists") {
 			}
 			newPlaylist.remove();
 			document.getElementById("maploadwindowplaylistnew").display = "inline-block";
+			window.playlists.editing = false;
 		};
 		
 		let saveButton = document.createElement("div");
@@ -516,6 +519,7 @@ else if (I0k[0][0] == "playlists") {
 			}
 			document.getElementById("maploadtypedropdownoptionplaylists").click();
 			document.getElementById("maploadwindowplaylistnew").display = "inline-block";
+			window.playlists.editing = false;
 		};
 	
 		newPlaylist.appendChild(image);
@@ -592,6 +596,7 @@ else if (I0k[0][0] == "playlists") {
 			editButton.onclick = () => {
 				playlist.style.display = "none";
 				document.getElementById("maploadwindowmapscontainer").insertBefore(playlistCreator(list, playlist), playlist);
+				window.playlists.editing = true;
 			}
 
 			let leftButton = document.createElement("div");
@@ -695,6 +700,7 @@ else if (I0k[0][0] == "playlists") {
 			}
 
 			playlist.onmouseenter = () => {
+				if(window.playlists.editing) return;
 				if(window.playlists.edit) {
 					deleteButton.style.visibility = "inherit";
 					editButton.style.visibility = "inherit";
@@ -769,7 +775,7 @@ else if (I0k[0][0] == "playlists") {
 				}
 				addMaps();
 			}
-			else if(list.maps === "new") {
+			else if(list.maps === "new" && !window.playlists.editing) {
 				playlist.style.display = "none";
 				document.getElementById("maploadwindowmapscontainer").insertBefore(playlistCreator(), playlist);
 			}
