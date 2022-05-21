@@ -1,7 +1,7 @@
 #!/bin/bash
 name="Bonk Playlists"
 sname="bonk-playlists"
-version="1.6"
+version="2.0"
 description="Adds map playlists to bonk.io"
 
 tmp0=$(mktemp)
