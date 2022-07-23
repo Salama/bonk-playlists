@@ -343,63 +343,63 @@ document.getElementById("newbonklobby_mapbutton").addEventListener("click", () =
 });
 
 const PLAYLIST_SCROLL = `
-if(o0k[65] == "playlists") {return;} else if(o0k[65] == G9b.A43(3378) || o0k[65] == G9b.z43(3395) || o0k[65] == G9b.z43(3379))`;
+if(R9S[17] == "playlists") {return;} else if(R9S[17] == H1N.L77(2642) || R9S[17] == H1N.D$J(2723) || R9S[17] == H1N.D$J(2576))`;
 
 const PLAYLIST_COMMANDS = `
-if (I8H[5][0].startsWith("/p") && !Number.isNaN(Number(I8H[5][0].substr(2)))) {
-	if(!I8H[5][1]) {
-		I8H[5][1] = !Number.isNaN(Number(I8H[5][0].substr(2)));
+if (N_B[6][0].startsWith("/p") && !Number.isNaN(Number(N_B[6][0].substr(2)))) {
+	if(!N_B[6][1]) {
+		N_B[6][1] = !Number.isNaN(Number(N_B[6][0].substr(2)));
 	}
-	if(I8H[5][1] == "list") {
-		F5S("Saved playlists", "#cc3333", true);
+	if(N_B[6][1] == "list") {
+		e6L("Saved playlists", "#cc3333", true);
 		for(let i = 0; i < window.playlists.playlists.length; i++) {
-			F5S("* [" + (i+1) + "] " + window.playlists.playlists[i].name, "#cc3333", true);
+			e6L("* [" + (i+1) + "] " + window.playlists.playlists[i].name, "#cc3333", true);
 		}
 	}
-	else if(!isNaN(I8H[5][1])) {
-		if(I8H[5][1] < 1 || I8H[5][1] > window.playlists.playlists.length) {
+	else if(!isNaN(N_B[6][1])) {
+		if(N_B[6][1] < 1 || N_B[6][1] > window.playlists.playlists.length) {
 			if(window.playlists.playlists.length === 0) {
-				F5S("You don't have any playlists!", "#cc3333", true);
+				e6L("You don't have any playlists!", "#cc3333", true);
 			}
-			F5S("Playlist index must be between 1 and " + (window.playlists.playlists.length), "#cc3333", true);
+			e6L("Playlist index must be between 1 and " + (window.playlists.playlists.length), "#cc3333", true);
 		}
 		else {
-			if(u6H[36].map.m.dbv === 2 && u6H[36].map.m.date !== undefined && u6H[36].map.m.date !== null && u6H[36].map.m.date !== "") {
-				if(window.playlists.playlists[I8H[5][1] - 1].maps.includes(u6H[36].map.m.dbid)) {
-					window.playlists.playlists[I8H[5][1] - 1].maps.splice(window.playlists.playlists[I8H[5][1] - 1].maps.indexOf(u6H[36].map.m.dbid), 1);
-					F5S("* Map removed from playlist", "#cc3333", true);
+			if(F21[95].map.m.dbv === 2 && F21[95].map.m.date !== undefined && F21[95].map.m.date !== null && F21[95].map.m.date !== "") {
+				if(window.playlists.playlists[N_B[6][1] - 1].maps.includes(F21[95].map.m.dbid)) {
+					window.playlists.playlists[N_B[6][1] - 1].maps.splice(window.playlists.playlists[N_B[6][1] - 1].maps.indexOf(F21[95].map.m.dbid), 1);
+					e6L("* Map removed from playlist", "#cc3333", true);
 				}
 				else {
 					q5S();
-					window.playlists.playlists[I8H[5][1] - 1].maps.push(u6H[36].map.m.dbid);
-					F5S("* Map added to playlist", "#cc3333", true);
+					window.playlists.playlists[N_B[6][1] - 1].maps.push(F21[95].map.m.dbid);
+					e6L("* Map added to playlist", "#cc3333", true);
 				}
 			}
 			else {
-				if(window.playlists.playlists[I8H[5][1] - 1].b1maps.map(e => {return e.id}).includes(u6H[36].map.m.dbid)) {
-					window.playlists.playlists[I8H[5][1] - 1].b1maps.splice(window.playlists.playlists[I8H[5][1] - 1].b1maps.map(e => {return e.id}).indexOf(u6H[36].map.m.dbid), 1);
-					F5S("* Map removed from playlist", "#cc3333", true);
+				if(window.playlists.playlists[N_B[6][1] - 1].b1maps.map(e => {return e.id}).includes(F21[95].map.m.dbid)) {
+					window.playlists.playlists[N_B[6][1] - 1].b1maps.splice(window.playlists.playlists[N_B[6][1] - 1].b1maps.map(e => {return e.id}).indexOf(F21[95].map.m.dbid), 1);
+					e6L("* Map removed from playlist", "#cc3333", true);
 				}
 				else {
 					let b1map = {
-						id: u6H[36].map.m.dbid,
-						name: u6H[36].map.m.n,
-						authorname: u6H[36].map.m.a,
-						leveldata: T.encodeToDatabase(u6H[36].map),
-						vu: u6H[36].map.m.vu,
-						vd: u6H[36].map.m.vd,
-						remixname: u6H[36].map.m.rxn,
-						remixauthor: u6H[36].map.m.rxa,
-						remixdb: u6H[36].map.m.rxdb,
-						remixid: u6H[36].map.m.rxid,
-						publisheddate: u6H[36].map.m.date
+						id: F21[95].map.m.dbid,
+						name: F21[95].map.m.n,
+						authorname: F21[95].map.m.a,
+						leveldata: L.encodeToDatabase(F21[95].map),
+						vu: F21[95].map.m.vu,
+						vd: F21[95].map.m.vd,
+						remixname: F21[95].map.m.rxn,
+						remixauthor: F21[95].map.m.rxa,
+						remixdb: F21[95].map.m.rxdb,
+						remixid: F21[95].map.m.rxid,
+						publisheddate: F21[95].map.m.date
 					}
-					if(u6H[36].map.m.date === undefined || u6H[36].map.m.date === null || u6H[36].map.m.date === "" || u6H[36].map.m.vu * 1 != u6H[36].map.m.vu || u6H[36].map.m.vd * 1 != u6H[36].map.m.vd) {
-						F5S("* Map could not be added to the playlist! To add Bonk 1 maps, you need to select the map from by yourself without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added to a playlist.", "#cc3333", true);
+					if(F21[95].map.m.date === undefined || F21[95].map.m.date === null || F21[95].map.m.date === "" || F21[95].map.m.vu * 1 != F21[95].map.m.vu || F21[95].map.m.vd * 1 != F21[95].map.m.vd) {
+						e6L("* Map could not be added to the playlist! To add Bonk 1 maps, you need to select the map from by yourself without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added to a playlist.", "#cc3333", true);
 					}
 					else {
-						window.playlists.playlists[I8H[5][1] - 1].b1maps.push(b1map);
-						F5S("* Map added to playlist", "#cc3333", true);
+						window.playlists.playlists[N_B[6][1] - 1].b1maps.push(b1map);
+						e6L("* Map added to playlist", "#cc3333", true);
 					}
 				}
 			}
@@ -407,33 +407,33 @@ if (I8H[5][0].startsWith("/p") && !Number.isNaN(Number(I8H[5][0].substr(2)))) {
 		}
 	}
 	else {
-		F5S("* List of playlist commands:", "#cc3333", true);
-		F5S("/p list", "#cc3333", true);
-		F5S("/p [index]", "#cc3333", true);
+		e6L("* List of playlist commands:", "#cc3333", true);
+		e6L("/p list", "#cc3333", true);
+		e6L("/p [index]", "#cc3333", true);
 	}
 }
-else if(I8H[5][0] == G9b.z43(1869`;
+else if(N_B[6][0] == H1N.L77(1120)`;
 
 const DROPDOWN_CLICK = `
-if (y5k[0][0][y5k[7][1008]] == document.getElementById("maploadtypedropdownoptionplaylists")) {
-	o0k[64]["innerHTML"] = document.getElementById("maploadtypedropdownoptionplaylists")["innerHTML"];
-	r7h("playlists", true);
+if (R49[0][0][R49[3][1008]] == document.getElementById("maploadtypedropdownoptionplaylists")) {
+	R9S[22].innerHTML = document.getElementById("maploadtypedropdownoptionplaylists").innerHTML;
+	I2F("playlists", true);
 	document.getElementById("maploadwindowplaylistbutton").style.display = "block";
 	document.getElementById("maploadwindowtoolbox").style.display = "flex";
 	document.getElementById("maploadwindowmapscontainer").style.bottom = "28px";
 	document.getElementById("maploadwindowmapscontainer").style.height = "calc(100% - 108px - 23px)";
-	o0k[28]["style"]["visibility"] = "hidden";
-	o0k[12]["style"]["visibility"] = "hidden";
+	R9S[54].style.visibility = "hidden";
+	R9S[92].style.visibility = "hidden";
   }
-  if(y5k[0][0][y5k[7][1008]] == o0k[38]){`;
+  if(R49[0][0][R49[3][1008]] == R9S[46]){`;
 const HOTNESS_SLIDER_AND_DROPDOWN_TITLE = `
-else if (I0k[0][0] == "playlists") {
-	o0k[64]["innerHTML"] = "MY PLAYLISTS";
-	o0k[12]["style"]["visibility"] = "hidden";
-}else if(I0k[0][0] == G9b.z43(3380)){o0k[64][I0k[6][1036]]=G9b.A43(3399);`
+else if (arguments[0] == "playlists") {
+	R9S[22].innerHTML = "MY PLAYLISTS";
+	R9S[92].style.visibility = "hidden";
+}else if(w$u[0][0] == H1N.L77(3001)){`
 const GET_PLAYLISTS = `
-else if (I0k[0][0] == "playlists") {
-	o0k[22] = false;
+else if (arguments[0] == "playlists") {
+	R9S[33] = false;
 
 	let newPlaylistButton = {
 		name: "NEW PLAYLIST",
@@ -533,7 +533,7 @@ else if (I0k[0][0] == "playlists") {
 		return newPlaylist;
 	}
 
-	o0k[22] = true;
+	R9S[33] = true;
 	for(let list of window.playlists.playlists.concat([newPlaylistButton])) {
 		let playlist = document.createElement("div");
 		playlist.classList.add("maploadwindowmapdiv");
@@ -754,24 +754,23 @@ else if (I0k[0][0] == "playlists") {
 				}
 				document.getElementById("maploadwindowstatustext").style.visibility = "inherit";
 				let addMaps = (offset = 0) => {
-					$["post"]("https://bonk2.io/scripts/map_getfave.php", {
-						token: o0k[7],
+					$.post("https://bonk2.io/scripts/map_getfave.php", {
+						token: R9S[6],
 						startingfrom: offset * 32
-					}) ["done"](function (h0i, Y0i) {
-						var X0k = [arguments];
-						if (X0k[0][0]["r"] != "success") {
-							W7h("Fetch error");
-						} else if (X0k[0][0]["r"] == "success") {
-							let filteredMapList = X0k[0][0];
+					}).done(function (h0i, Y0i) {
+						if (arguments[0].r != "success") {
+							F$m("Fetch error");
+						} else if (arguments[0].r == "success") {
+							let filteredMapList = arguments[0];
 							filteredMapList.maps = filteredMapList.maps.map(e => {if(list.maps.includes(e.id)) {return e;}}).sort().slice(0, list.maps.length);
 							document.getElementById("maploadwindowstatustext").style.visibility = "hidden";
 
-							n2h(filteredMapList);
-							if(X0k[0][0]["more"]) {
+							d6k(filteredMapList);
+							if(arguments[0].more) {
 								addMaps(offset + 1);
 							}
 							else {
-								n2h({r: "success", maps: list.b1maps, more: false});
+								m$g({r: "success", maps: list.b1maps, more: false}, 0);
 							}
 						}
 					})
@@ -787,4 +786,4 @@ else if (I0k[0][0] == "playlists") {
 
 	document.getElementById("maploadwindowstatustext").style.visibility = "hidden";
 }
-else if(I0k[0][0] == G9b.A43(3380)){o0k[22]=false;`
+else if(w$u[0][0] == H1N.L77(3001)){R9S[33]=false;`

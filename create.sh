@@ -1,7 +1,7 @@
 #!/bin/bash
 name="Bonk Playlists"
 sname="bonk-playlists"
-version="2.0"
+version="3.0"
 description="Adds map playlists to bonk.io"
 
 tmp0=$(mktemp)
@@ -40,7 +40,7 @@ cat xx00 > "$tmp0"
 cat ../mod/constants.js >> "$tmp0"
 cat xx01 | tail -n+2 >> "$tmp0"
 
-cat "$tmp0" | sed "s#/\*\*\*NAME\*\*\*/#$name#g" | sed "s#/\*\*\*SNAME\*\*\*/#$sname#g" | sed "s#/\*\*\*VERSION\*\*\*/#$version#g" | sed "s#/\*\*\*DESCRIPTION\*\*\*/#$description#g" > "$sname.js"
+cat "$tmp0" | sed "s#/\*\*\*NAME\*\*\*/#$name#g" | sed "s#/\*\*\*SNAME\*\*\*/#$sname#g" | sed "s#/\*\*\*VERSION\*\*\*/#$version#g" | sed "s#/\*\*\*DESCRIPTION\*\*\*/#$description#g" > "$sname.user.js"
 
 rm xx00 xx01 "$tmp0" manifest.json injector.js loadInjector.js runInjectors.js background.js
 
