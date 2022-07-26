@@ -370,7 +370,7 @@ if (N_B[6][0].startsWith("/p") && !Number.isNaN(Number(N_B[6][0].substr(2)))) {
 					e6L("* Map removed from playlist", "#cc3333", true);
 				}
 				else {
-					q5S();
+					N9P();
 					window.playlists.playlists[N_B[6][1] - 1].maps.push(F21[95].map.m.dbid);
 					e6L("* Map added to playlist", "#cc3333", true);
 				}
