@@ -2,6 +2,14 @@ window.playlists = {};
 window.playlists.edit = false;
 window.playlists.autofav = false;
 window.playlists.editing = false;
+window.playlists.categoryFunc = ()=>{};
+window.playlists.mapLoader = ()=>{};
+window.playlists.menuFunctions = {};
+window.playlists.toolFunctions = {};
+window.playlists.setMapsLoaded = ()=>{};
+window.playlists.setMapsLoadFinished = ()=>{};
+window.playlists.bigClass = {};
+
 let token = null;
 window.playlists.merge = {
 	enabled: false,
@@ -19,6 +27,72 @@ let playlistsButton = document.createElement('div');
 let toolbox = document.createElement('div');
 //Insert before favs
 document.getElementById("maploadtypedropdown").insertBefore(dropdownOption, document.getElementById("maploadtypedropdownoption1"));
+
+// Monitor style changes
+const dropdownObserver = new MutationObserver(() => {
+	document.getElementById("maploadtypedropdownoptionplaylists").style.display = document.getElementById("maploadtypedropdownoption1").style.display;
+	document.getElementById("maploadtypedropdownoptionplaylists").onclick = () => {
+		document.getElementById("maploadtypedropdowntitle").innerHTML = "MY PLAYLISTS";
+		window.playlists.categoryFunc("blank", true);
+		window.playlists.categoryFunc("playlists", true);
+		document.getElementById("maploadwindowsearchoptions").style.visibility = "hidden";
+		document.getElementById("maploadwindowhotnessslider").style.visibility = "hidden";
+		document.getElementById("maploadwindowsearchinput").style.visibility = "hidden";
+		document.getElementById("maploadwindowsearchbutton").style.visibility = "hidden";
+		document.getElementById("maploadwindowtoolbox").style.display = "flex";
+		getPlaylists();
+	};
+	if(document.getElementById("maploadtypedropdowntitle").innerHTML === "MY PLAYLISTS") {
+		document.getElementById("maploadwindowplaylistbackbutton").style.display = "block";
+		document.getElementById("maploadwindowtoolbox").style.display = "flex";
+		document.getElementById("maploadwindowmapscontainer").style.bottom = "28px";
+		document.getElementById("maploadwindowmapscontainer").style.height = "calc(100% - 108px - 23px)";
+		document.getElementById("maploadwindowsearchinput").style.visibility = "hidden";
+		document.getElementById("maploadwindowsearchbutton").style.visibility = "hidden";
+	}
+	else {
+		// Might conflict with future mods
+		document.getElementById("maploadwindowplaylistbackbutton").style.display = "none";
+		document.getElementById("maploadwindowtoolbox").style.display = "none";
+		document.getElementById("maploadwindowmapscontainer").style.removeProperty("bottom");
+		document.getElementById("maploadwindowmapscontainer").style.removeProperty("height");
+		document.getElementById("maploadwindowsearchinput").style.removeProperty("visibility");
+		document.getElementById("maploadwindowsearchbutton").style.removeProperty("visibility");
+		if(window.playlists.edit) {
+			document.getElementById("maploadwindowplaylistedit").click();
+		}
+		if(window.playlists.merge.enabled) {
+			document.getElementById("maploadwindowplaylistmerge").click();
+		}
+	}
+	document.getElementById("maploadwindowplaylistbackbutton").onclick = document.getElementById("maploadtypedropdownoptionplaylists").onclick;
+	document.getElementById("maploadtypedropdownoptionplaylists").onmouseenter = document.getElementById("maploadtypedropdownoption1").onmouseenter;
+	document.getElementById("maploadtypedropdownoptionplaylists").onmouseleave = document.getElementById("maploadtypedropdownoption1").onmouseleave;
+	document.getElementById("maploadtypedropdownoptionplaylists").onmousedown = document.getElementById("maploadtypedropdownoption1").onmousedown;
+
+	document.getElementById("maploadwindowplaylistbackbutton").onmouseenter = document.getElementById("maploadtypedropdownoption1").onmouseenter;
+	document.getElementById("maploadwindowplaylistbackbutton").onmouseleave = document.getElementById("maploadtypedropdownoption1").onmouseleave;
+	document.getElementById("maploadwindowplaylistbackbutton").onmousedown = document.getElementById("maploadtypedropdownoption1").onmousedown;
+
+});
+
+chatObserver = new MutationObserver(e => {
+	for(let mutation of e) {
+		if(mutation.type == "childList") {
+			for(let node of mutation.addedNodes) {
+				if(node.textContent === "* Accepted commands are listed above ") {
+					let helpmsg = document.createElement("div");
+					mutation.target.insertBefore(helpmsg, node.previousSibling);
+					helpmsg.outerHTML = '<div><span class="newbonklobby_chat_status" style="color: rgb(204, 51, 51);">/p - commands from playlists mod</span></div>';
+				}
+			}
+		}
+	}
+});
+
+chatObserver.observe(document.getElementById("newbonklobby_chat_content"), {attributes: false, childList: true, subtree: false});
+dropdownObserver.observe(document.getElementById("maploadtypedropdownoption1"), {attributes: true, childList: false, subtree: true});
+
 document.getElementById("maploadwindow").appendChild(playlistsButton);
 document.getElementById("maploadwindow").appendChild(toolbox);
 toolbox.outerHTML = `<div id="maploadwindowtoolbox" style="width: 100%;height: 23px;bottom: 0;position: absolute;background-color: inherit;z-index: 1;display: none;padding: 5px;">
@@ -31,7 +105,7 @@ toolbox.outerHTML = `<div id="maploadwindowtoolbox" style="width: 100%;height: 2
 </div>`;
 
 dropdownOption.outerHTML = `<div class="dropdown-option dropdown_classic" id="maploadtypedropdownoptionplaylists" style="display: none;">MY PLAYLISTS</div>`;
-playlistsButton.outerHTML = `<div class="brownButton brownButton_classic buttonShadow" id="maploadwindowplaylistbutton" onclick="document.getElementById(&quot;maploadtypedropdownoptionplaylists&quot;).click();" style="position: absolute; left: 210px; line-height: 23px; height: 23px; width: 75px; top: 57px; display: block;">BACK</div>`;
+playlistsButton.outerHTML = `<div class="brownButton brownButton_classic buttonShadow" id="maploadwindowplaylistbackbutton" style="position: absolute; left: 210px; line-height: 23px; height: 23px; width: 75px; top: 57px; display: block;">BACK</div>`;
 
 let dbRequest = indexedDB.open("salamaStorage", 1);
 let db;
@@ -39,8 +113,13 @@ let db;
 window.playlists.playlists = [];
 
 window.playlists.savePlaylists = playlists => {
-	let transaction = db.transaction("playlists", "readwrite");
-	transaction.objectStore("playlists").put(playlists, 1);
+	try {
+		let transaction = db.transaction("playlists", "readwrite");
+		transaction.objectStore("playlists").put(playlists, 1);
+	}
+	catch(e) {
+		console.log("Couln't save playlists to db: ", e)
+	}
 }
 
 dbRequest.onsuccess = e => {
@@ -69,7 +148,7 @@ const validatePlaylists = playlists => {
 		let newPlaylists = JSON.parse(playlists);
 		for(let playlist of newPlaylists) {
 			if(!(
-				Object.keys(playlist) == "name,description,image,maps,b1maps" &&
+				Object.keys(playlist).find(i => !["name","description","image","maps","b1maps"].includes(i)) === undefined &&
 				typeof(playlist.name) == "string" &&
 				typeof(playlist.description) == "string" &&
 				(typeof(playlist.image) == "string" || playlist.image == undefined) &&
@@ -105,7 +184,7 @@ document.getElementById("maploadwindowplaylistimport").addEventListener("click",
 			let newPlaylists = readerEvent.target.result;
 			if(validatePlaylists(newPlaylists)) {
 				window.playlists.playlists = window.playlists.playlists.concat(JSON.parse(newPlaylists));
-			window.playlists.savePlaylists(window.playlists.playlists);
+				window.playlists.savePlaylists(window.playlists.playlists);
 				document.getElementById("maploadwindowplaylistautofav").click();
 			}
         }
@@ -157,7 +236,12 @@ document.getElementById("maploadwindowplaylistautofav").addEventListener("click"
 		document.getElementById("maploadwindowplaylistautofavstatus").innerText += `\nError: ${error}`;
 	}
 	else if(error != "cancelled") {
-		maps = [...new Set(window.playlists.playlists.map(e => {return e.maps;}).reduce((a, b) => {return a.concat(b);}).filter(e => {return !maps.includes(e);}))];
+		if(window.playlists.playlists.length > 0) {
+			maps = [...new Set(window.playlists.playlists.map(e => {return e.maps;}).reduce((a, b) => {return a.concat(b);}).filter(e => {return !maps.includes(e);}))];
+		}
+		else {
+			maps = [];
+		}
 		document.getElementById("maploadwindowplaylistautofavstatus").innerText += `\n${maps.length} maps to favorite`;
 		document.getElementById("maploadwindowplaylistautofavprogress").innerText = `[${'0'.repeat((maps.length+'').length)} / ${maps.length}]`;
 		if(maps.length == 0) return;
@@ -249,18 +333,19 @@ document.getElementById("maploadwindowplaylistedit").addEventListener("click", e
 		document.getElementById("maploadwindowplaylistdeleteall").style.display = "block";
 		document.getElementById("maploadwindowplaylistdeleteall").innerText = "DELETE ALL";
 		e.target.style.filter = "brightness(1.75)";
-		document.getElementById("maploadwindowplaylistnew").style.display = "inline-block";
+		document.getElementById("maploadtypedropdownoptionplaylists").click();
 	}
 	else {
 		document.getElementById("maploadwindowplaylistedit").style.removeProperty("filter");
-		document.getElementById("maploadwindowplaylistnew").style.display = "none";
 		document.getElementById("maploadwindowplaylistmerge").classList.remove("brownButtonDisabled");
 		document.getElementById("maploadwindowplaylistimport").classList.remove("brownButtonDisabled");
 		document.getElementById("maploadwindowplaylistexport").classList.remove("brownButtonDisabled");
 		document.getElementById("maploadwindowplaylistautofav").classList.remove("brownButtonDisabled");
 		document.getElementById("maploadwindowplaylistdeleteall").style.display = "none";
 		window.playlists.savePlaylists(window.playlists.playlists);
-		document.getElementById("maploadtypedropdownoptionplaylists").click();
+		if(document.getElementById("maploadtypedropdowntitle").innerHTML === "MY PLAYLISTS") {
+			document.getElementById("maploadtypedropdownoptionplaylists").click();
+		}
 	}
 });
 
@@ -269,7 +354,6 @@ document.getElementById("maploadwindowplaylistmerge").addEventListener("click", 
 	if(window.playlists.merge.enabled) {
 		window.playlists.edit = false;
 		document.getElementById("maploadwindowplaylistedit").style.removeProperty("filter");
-		document.getElementById("maploadwindowplaylistnew").style.display = "none";
 		e.target.style.filter = "brightness(1.75)";
 		document.getElementById("maploadwindowplaylistedit").classList.add("brownButtonDisabled");
 		document.getElementById("maploadwindowplaylistimport").classList.add("brownButtonDisabled");
@@ -329,116 +413,127 @@ document.getElementById("maploadwindowplaylistdeleteall").addEventListener("clic
 
 document.getElementById("newbonklobby_mapbutton").addEventListener("click", () => {
     if(document.getElementById("maploadtypedropdowntitle").innerText === "MY PLAYLISTS") {
-        document.getElementById("maploadwindowplaylistbutton").style.display = "block";
+        document.getElementById("maploadwindowplaylistbackbutton").style.display = "block";
 		document.getElementById("maploadwindowtoolbox").style.display = "flex";
 		document.getElementById("maploadwindowmapscontainer").style.bottom = "28px";
 		document.getElementById("maploadwindowmapscontainer").style.height = "calc(100% - 108px - 23px)";
     }
     else {
-        document.getElementById("maploadwindowplaylistbutton").style.display = "none";
+        document.getElementById("maploadwindowplaylistbackbutton").style.display = "none";
 		document.getElementById("maploadwindowtoolbox").style.display = "none";
 		document.getElementById("maploadwindowmapscontainer").style.removeProperty("bottom");
 		document.getElementById("maploadwindowmapscontainer").style.removeProperty("height");
     }
 });
 
-const PLAYLIST_SCROLL = `
-if(R9S[17] == "playlists") {return;} else if(R9S[17] == H1N.L77(2642) || R9S[17] == H1N.D$J(2723) || R9S[17] == H1N.D$J(2576))`;
-
-const PLAYLIST_COMMANDS = `
-if (N_B[6][0].startsWith("/p") && !Number.isNaN(Number(N_B[6][0].substr(2)))) {
-	if(!N_B[6][1]) {
-		N_B[6][1] = !Number.isNaN(Number(N_B[6][0].substr(2)));
-	}
-	if(N_B[6][1] == "list") {
-		e6L("Saved playlists", "#cc3333", true);
-		for(let i = 0; i < window.playlists.playlists.length; i++) {
-			e6L("* [" + (i+1) + "] " + window.playlists.playlists[i].name, "#cc3333", true);
-		}
-	}
-	else if(!isNaN(N_B[6][1])) {
-		if(N_B[6][1] < 1 || N_B[6][1] > window.playlists.playlists.length) {
-			if(window.playlists.playlists.length === 0) {
-				e6L("You don't have any playlists!", "#cc3333", true);
-			}
-			e6L("Playlist index must be between 1 and " + (window.playlists.playlists.length), "#cc3333", true);
-		}
-		else {
-			if(F21[95].map.m.dbv === 2 && F21[95].map.m.date !== undefined && F21[95].map.m.date !== null && F21[95].map.m.date !== "") {
-				if(window.playlists.playlists[N_B[6][1] - 1].maps.includes(F21[95].map.m.dbid)) {
-					window.playlists.playlists[N_B[6][1] - 1].maps.splice(window.playlists.playlists[N_B[6][1] - 1].maps.indexOf(F21[95].map.m.dbid), 1);
-					e6L("* Map removed from playlist", "#cc3333", true);
-				}
-				else {
-					N9P();
-					window.playlists.playlists[N_B[6][1] - 1].maps.push(F21[95].map.m.dbid);
-					e6L("* Map added to playlist", "#cc3333", true);
-				}
-			}
-			else {
-				if(window.playlists.playlists[N_B[6][1] - 1].b1maps.map(e => {return e.id}).includes(F21[95].map.m.dbid)) {
-					window.playlists.playlists[N_B[6][1] - 1].b1maps.splice(window.playlists.playlists[N_B[6][1] - 1].b1maps.map(e => {return e.id}).indexOf(F21[95].map.m.dbid), 1);
-					e6L("* Map removed from playlist", "#cc3333", true);
-				}
-				else {
-					let b1map = {
-						id: F21[95].map.m.dbid,
-						name: F21[95].map.m.n,
-						authorname: F21[95].map.m.a,
-						leveldata: L.encodeToDatabase(F21[95].map),
-						vu: F21[95].map.m.vu,
-						vd: F21[95].map.m.vd,
-						remixname: F21[95].map.m.rxn,
-						remixauthor: F21[95].map.m.rxa,
-						remixdb: F21[95].map.m.rxdb,
-						remixid: F21[95].map.m.rxid,
-						publisheddate: F21[95].map.m.date
+const chatHandler = e => {
+	if(e.keyCode === 13) {
+		if(e.target.value.length > 0) {
+			if(e.target.value[0] === "/") {
+				let command = e.target.value.split(" ")[0].substring(1);
+				let args = e.target.value.split(" ").slice(1);
+				if(command === "fav") {
+					console.log("Autofav = " + window.playlists.autofav);
+					if(window.playlists.autofav) {
+						e.target.value = "";
+						window.playlists.menuFunctions.showStatusMessage("* Favoriting maps is disabled while autofav is on", "#cc3333");
 					}
-					if(F21[95].map.m.date === undefined || F21[95].map.m.date === null || F21[95].map.m.date === "" || F21[95].map.m.vu * 1 != F21[95].map.m.vu || F21[95].map.m.vd * 1 != F21[95].map.m.vd) {
-						e6L("* Map could not be added to the playlist! To add Bonk 1 maps, you need to select the map from by yourself without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added to a playlist.", "#cc3333", true);
+				}
+				else if(command.startsWith("p") && !Number.isNaN(Number(command.substr(1)))) {
+					e.target.value = "";
+					if(args[0] === "list" && command === "p") {
+						window.playlists.menuFunctions.showStatusMessage("Saved playlists", "#cc3333");
+						for(let i = 0; i < window.playlists.playlists.length; i++) {
+							window.playlists.menuFunctions.showStatusMessage("* [" + (i+1) + "] " + window.playlists.playlists[i].name, "#cc3333");
+						}
+						return;
+					}
+					if(args.length === 0) {
+						args[0] = parseInt(command.substr(1));
+					}
+					if(Number.isNaN(parseInt(args[0]))) {
+						// Show help
+						window.playlists.menuFunctions.showStatusMessage("* List of playlist commands:", "#cc3333", true);
+						window.playlists.menuFunctions.showStatusMessage("/p list", "#cc3333", true);
+						window.playlists.menuFunctions.showStatusMessage("/p [index]", "#cc3333", true);
+						return;
+					}
+					
+					if(args[0] < 1 || args[0] > window.playlists.playlists.length) {
+						if(window.playlists.playlists.length === 0) {
+							window.playlists.menuFunctions.showStatusMessage("You don't have any playlists!", "#cc3333");
+							return;
+						}
+						window.playlists.menuFunctions.showStatusMessage("Playlist index must be between 1 and " + (window.playlists.playlists.length), "#cc3333");
+						return;
+					}
+
+					let gameSettings = window.playlists.toolFunctions.getGameSettings();
+					
+					if(!gameSettings.map.m.pub && gameSettings.map.dbv == 2) {
+						window.playlists.menuFunctions.showStatusMessage("You can't add a private map to a playlist! If it is a Bonk 1 map, *you* need to select the map from Bonk 1 map list without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added or removed.", "#cc3333");
+						return;
+					}
+
+					if(gameSettings.map.m.dbv === 2 && gameSettings.map.m.date !== undefined && gameSettings.map.m.date !== null && gameSettings.map.m.date !== "") {
+						if(window.playlists.playlists[args[0] - 1].maps.includes(gameSettings.map.m.dbid)) {
+							window.playlists.playlists[args[0] - 1].maps.splice(window.playlists.playlists[args[0] - 1].maps.indexOf(gameSettings.map.m.dbid), 1);
+							window.playlists.menuFunctions.showStatusMessage("* Map removed from playlist", "#cc3333", true);
+						}
+						else {
+							// Hacky way to favorite the map
+							e.target.value = "/fav";
+							window.playlists.playlists[args[0] - 1].maps.push(gameSettings.map.m.dbid);
+							window.playlists.menuFunctions.showStatusMessage("* Map added to playlist", "#cc3333", true);
+						}
 					}
 					else {
-						window.playlists.playlists[N_B[6][1] - 1].b1maps.push(b1map);
-						e6L("* Map added to playlist", "#cc3333", true);
+						if(window.playlists.playlists[args[0] - 1].b1maps.map(e => {return e.id}).includes(gameSettings.map.m.dbid)) {
+							window.playlists.playlists[args[0] - 1].b1maps.splice(window.playlists.playlists[args[0] - 1].b1maps.map(e => {return e.id}).indexOf(gameSettings.map.m.dbid), 1);
+							window.playlists.menuFunctions.showStatusMessage("* Map removed from playlist", "#cc3333", true);
+						}
+						else {
+							let b1map = {
+								id: gameSettings.map.m.dbid,
+								name: gameSettings.map.m.n,
+								authorname: gameSettings.map.m.a,
+								leveldata: window.playlists.bigClass.encodeToDatabase(gameSettings.map),
+								vu: gameSettings.map.m.vu,
+								vd: gameSettings.map.m.vd,
+								remixname: gameSettings.map.m.rxn,
+								remixauthor: gameSettings.map.m.rxa,
+								remixdb: gameSettings.map.m.rxdb,
+								remixid: gameSettings.map.m.rxid,
+								publisheddate: gameSettings.map.m.date
+							}
+							if(gameSettings.map.m.date === undefined || gameSettings.map.m.date === null || gameSettings.map.m.date === "" || gameSettings.map.m.vu * 1 != gameSettings.map.m.vu || gameSettings.map.m.vd * 1 != gameSettings.map.m.vd) {
+								window.playlists.menuFunctions.showStatusMessage("* Map could not be added to the playlist! To add Bonk 1 maps, *you* need to select the map from Bonk 1 map list without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added or removed.", "#cc3333", true);
+							}
+							else {
+								window.playlists.playlists[args[0] - 1].b1maps.push(b1map);
+								window.playlists.menuFunctions.showStatusMessage("* Map added to playlist", "#cc3333", true);
+							}
+						}
 					}
+					window.playlists.savePlaylists(window.playlists.playlists);
 				}
+				
 			}
-			window.playlists.savePlaylists(window.playlists.playlists);
 		}
 	}
-	else {
-		e6L("* List of playlist commands:", "#cc3333", true);
-		e6L("/p list", "#cc3333", true);
-		e6L("/p [index]", "#cc3333", true);
-	}
 }
-else if(N_B[6][0] == H1N.L77(1120)`;
 
-const DROPDOWN_CLICK = `
-if (R49[0][0][R49[3][1008]] == document.getElementById("maploadtypedropdownoptionplaylists")) {
-	R9S[22].innerHTML = document.getElementById("maploadtypedropdownoptionplaylists").innerHTML;
-	I2F("playlists", true);
-	document.getElementById("maploadwindowplaylistbutton").style.display = "block";
-	document.getElementById("maploadwindowtoolbox").style.display = "flex";
-	document.getElementById("maploadwindowmapscontainer").style.bottom = "28px";
-	document.getElementById("maploadwindowmapscontainer").style.height = "calc(100% - 108px - 23px)";
-	R9S[54].style.visibility = "hidden";
-	R9S[92].style.visibility = "hidden";
-  }
-  if(R49[0][0][R49[3][1008]] == R9S[46]){`;
-const HOTNESS_SLIDER_AND_DROPDOWN_TITLE = `
-else if (arguments[0] == "playlists") {
-	R9S[22].innerHTML = "MY PLAYLISTS";
-	R9S[92].style.visibility = "hidden";
-}else if(w$u[0][0] == H1N.L77(3001)){`
-const GET_PLAYLISTS = `
-else if (arguments[0] == "playlists") {
-	R9S[33] = false;
+document.getElementById("newbonklobby_chat_input").addEventListener("keydown", chatHandler, true);
+document.getElementById("ingamechatinputtext").addEventListener("keydown", chatHandler, true);
+
+const getPlaylists = () => {
+	window.playlists.setMapsLoaded(false);
+	window.playlists.setMapsLoadFinished(false);
 
 	let newPlaylistButton = {
 		name: "NEW PLAYLIST",
 		description: "Click here to create a new playlist",
-		image: "data:image/png;base64,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",
+		image: `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="110.417px" width="160.6px"><rect style="fill:0;height:100%;width:30px;x:65.3px;y:0;"/><rect style="fill:0;height:30px;width:110.417px;x:25.091px;y:40.208px;"/></svg>`,
 		maps: "new",
 		b1maps: "new"
 	};
@@ -493,7 +588,6 @@ else if (arguments[0] == "playlists") {
 				edit.style.display = "";
 			}
 			newPlaylist.remove();
-			document.getElementById("maploadwindowplaylistnew").display = "inline-block";
 			window.playlists.editing = false;
 		};
 		
@@ -521,7 +615,6 @@ else if (arguments[0] == "playlists") {
 				window.playlists.playlists[window.playlists.playlists.indexOf(list)] = Object.assign(window.playlists.playlists[window.playlists.playlists.indexOf(list)], {name: title.value, description: description.value, image: encodedImage === undefined ? list.image : encodedImage});
 			}
 			document.getElementById("maploadtypedropdownoptionplaylists").click();
-			document.getElementById("maploadwindowplaylistnew").display = "inline-block";
 			window.playlists.editing = false;
 		};
 	
@@ -533,7 +626,7 @@ else if (arguments[0] == "playlists") {
 		return newPlaylist;
 	}
 
-	R9S[33] = true;
+	window.playlists.setMapsLoaded(true);
 	for(let list of window.playlists.playlists.concat([newPlaylistButton])) {
 		let playlist = document.createElement("div");
 		playlist.classList.add("maploadwindowmapdiv");
@@ -546,7 +639,8 @@ else if (arguments[0] == "playlists") {
 			image.src = list.image;
 		}
 		else {
-			image.src = "//:0";
+			let color = [...list.name.substr(0,32)].reduce((a, b) => a + b.charCodeAt(0), 0) % 360;
+			image.src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="110.417px" width="160.6px"><rect style="fill:hsl(${color},75%,50%);height:100%;width:100%;"/></svg>`;
 		}
 		
 		image.style.width = "160.6px";
@@ -687,7 +781,9 @@ else if (arguments[0] == "playlists") {
 						element: mergeButton,
 						index: window.playlists.playlists.indexOf(list)
 					}
-					window.playlists.playlists[window.playlists.merge.to.index].b1maps = [...new Set(window.playlists.playlists[window.playlists.merge.from.index].b1maps.concat(window.playlists.playlists[window.playlists.merge.to.index].b1maps))];
+					window.playlists.playlists[window.playlists.merge.to.index].b1maps = [...new Set(
+						(window.playlists.playlists[window.playlists.merge.from.index].b1maps.concat(window.playlists.playlists[window.playlists.merge.to.index].b1maps)).map(m => JSON.stringify(m))
+					)].map(m => JSON.parse(m));
 					window.playlists.playlists[window.playlists.merge.to.index].maps = [...new Set(window.playlists.playlists[window.playlists.merge.from.index].maps.concat(window.playlists.playlists[window.playlists.merge.to.index].maps))];
 					window.playlists.playlists.splice(window.playlists.merge.from.index, 1);
 					window.playlists.merge.from.element.parentElement.style.opacity = 0.3;
@@ -744,36 +840,50 @@ else if (arguments[0] == "playlists") {
 		playlist.appendChild(title);
 		playlist.appendChild(description);
 		playlist.onclick = (e) => {
-			if((list.maps.length + list.b1maps.length) > 0 && list.maps !== "new" && !window.playlists.edit && !window.playlists.merge.enabled) {
-				if(e.target.classList.contains("brownButton")) return;
+			if(list.maps !== "new") {
+				if(window.playlists.edit || window.playlists.merge.enabled) return;
 				while(document.getElementById("maploadwindowmapscontainer").firstChild) {
 					document.getElementById("maploadwindowmapscontainer").firstChild.remove();
-					document.getElementById("maploadwindowtoolbox").style.display = "none";
-					document.getElementById("maploadwindowmapscontainer").style.removeProperty("bottom");
-					document.getElementById("maploadwindowmapscontainer").style.removeProperty("height");
 				}
+				document.getElementById("maploadwindowtoolbox").style.display = "none";
+				document.getElementById("maploadwindowmapscontainer").style.removeProperty("bottom");
+				document.getElementById("maploadwindowmapscontainer").style.removeProperty("height");
 				document.getElementById("maploadwindowstatustext").style.visibility = "inherit";
+				if((list.maps.length + list.b1maps.length) == 0) {
+					document.getElementById("maploadwindowstatustext").textContent = "No Maps";
+					return;
+				}
+				if(e.target.classList.contains("brownButton")) return;
+				let foundBonk2Maps = 0;
 				let addMaps = (offset = 0) => {
 					$.post("https://bonk2.io/scripts/map_getfave.php", {
-						token: R9S[6],
+						token: token,
 						startingfrom: offset * 32
 					}).done(function (h0i, Y0i) {
 						if (arguments[0].r != "success") {
-							F$m("Fetch error");
-						} else if (arguments[0].r == "success") {
+							document.getElementById("maploadwindowstatustext").style.visibility = "inherit";
+							document.getElementById("maploadwindowstatustext").textContent = "Fetch error";
+						}
+						else {
 							let filteredMapList = arguments[0];
-							filteredMapList.maps = filteredMapList.maps.map(e => {if(list.maps.includes(e.id)) {return e;}}).sort().slice(0, list.maps.length);
+							filteredMapList.maps = filteredMapList.maps.filter(e => {if(list.maps.includes(e.id)) {return e;}}).sort().slice(0, list.maps.length);
 							document.getElementById("maploadwindowstatustext").style.visibility = "hidden";
-
-							d6k(filteredMapList);
-							if(arguments[0].more) {
+							if(filteredMapList.maps.length > 0) {
+								window.playlists.mapLoader(filteredMapList);
+								foundBonk2Maps += filteredMapList.maps.length;
+							}
+							if(arguments[0].more && foundBonk2Maps < list.maps.length) {
 								addMaps(offset + 1);
 							}
+							else if(list.b1maps.length > 0) {
+								window.playlists.mapLoader({r: "success", maps: list.b1maps, more: false}, 0);
+								window.playlists.setMapsLoadFinished(true);
+							}
 							else {
-								m$g({r: "success", maps: list.b1maps, more: false}, 0);
+								window.playlists.setMapsLoadFinished(true);
 							}
 						}
-					})
+					});
 				}
 				addMaps();
 			}
@@ -786,4 +896,3 @@ else if (arguments[0] == "playlists") {
 
 	document.getElementById("maploadwindowstatustext").style.visibility = "hidden";
 }
-else if(w$u[0][0] == H1N.L77(3001)){R9S[33]=false;`

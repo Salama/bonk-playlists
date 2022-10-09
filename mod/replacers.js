@@ -1,43 +1,45 @@
-//Add click event listener
-newStr = newStr.replace(`R9S[56][W3b[6][630]]=C1L;`, `R9S[56][W3b[6][630]]=C1L;document.getElementById("maploadtypedropdownoptionplaylists").onclick=C1L;`);
+patchCounter = 0;
+const patch = (a, b) => {
+	c = newStr;
+	newStr = newStr.replace(a, b);
+	//console.log(`Patch ${patchCounter++}: ${c === newStr ? 'fail' : 'success'}`);
+	return c !== newStr;
+}
 
-//Make dropdown option visible
-newStr = newStr.replace(`R9S[56][H8o[9][459]][H8o[9][1019]]=H1N.D$J(3533);`, `R9S[56][H8o[9][459]][H8o[9][1019]]=H1N.D$J(3533);document.getElementById("maploadtypedropdownoptionplaylists").style.display="block";`);
+const categoryFunc = newStr.match(/[A-Za-z0-9\$_]{3}\([A-Za-z0-9\$_]{3}\.[A-Za-z0-9\$_]{3}\([0-9]*\),true\)/)[0].substr(0,3);
+patch(`function ${categoryFunc}`, `window.playlists.categoryFunc=${categoryFunc};function ${categoryFunc}`);
 
-//Make droopdown option invisible
-newStr = newStr.replace(`R9S[56][k3x[5][459]][k3x[5][1019]]=H1N.L77(1030);`, `R9S[56][k3x[5][459]][k3x[5][1019]]=H1N.L77(1030);document.getElementById("maploadtypedropdownoptionplaylists").style.display="none";`);
-
-//First dropdown list selection check
-newStr = newStr.replace(`if(R49[0][0][R49[3][1008]] == R9S[46]){`, DROPDOWN_CLICK);
-
-//Disable hotness slider and set dropdown title
-newStr = newStr.replace(`else if(w$u[0][0] == H1N.L77(3001)){`, HOTNESS_SLIDER_AND_DROPDOWN_TITLE);
-
-newStr = newStr.replace(`else if(w$u[0][0] == H1N.L77(3001)){R9S[33]=false;`, GET_PLAYLISTS);
-
-//Add commands
-newStr = newStr.replace(`if(N_B[6][0] == H1N.L77(1120)`, PLAYLIST_COMMANDS);
-
-//Hide back button when a dropdown menu item is selected. It will be made visible later
-newStr = newStr.replace(`function C1L(f$9){`, `function C1L(f$9){
-    document.getElementById("maploadwindowplaylistbutton").style.display="none";
-    document.getElementById("maploadwindowtoolbox").style.display="none";`);
-
-//Prevent playlists from appearing when scrolling
-newStr = newStr.replace(`if(R9S[17] == H1N.L77(2642) || R9S[17] == H1N.D$J(2723) || R9S[17] == H1N.D$J(2576))`, PLAYLIST_SCROLL);
+//Get map loader
+let mapLoader = newStr.match(/function.{0,500}try{\(function\(\){.{1000}/g);
+for(let loader of mapLoader) {
+	if(loader.match("=2")) {
+		mapLoader = loader;
+		break;
+	};
+}
+mapLoader = mapLoader.split("(")[0].split(" ")[1];
+patch(`function ${mapLoader}`, `window.playlists.mapLoader=${mapLoader};function ${mapLoader}`);
 
 //Get token
-newStr = newStr.replace(`R9S[6]=R9S[0][0];`, `R9S[6]=R9S[0][0];window.playlists.setToken(R9S[0][0]);`);
+patch('[1,10000,25000,100000,500000,8000000,5000000000];', '[1,10000,25000,100000,500000,8000000,5000000000];' + "window.playlists.setToken(arguments[0]);");
 
-//Disable fav
-newStr = newStr.replace(`var r9q`, `if(window.playlists.autofav){e6L("* Favoriting maps while autofav is on has been disabled because it can cause problems", "#cc3333", true);return;}` + `var r9q`);
+//Mapload ready variable
+let readyVar = newStr.match(/\+ 1000 && [A-Za-z0-9\$_]{3}\[[0-9+]+\]/)[0].split(" ")[3];
+patch('[1,10000,25000,100000,500000,8000000,5000000000];', '[1,10000,25000,100000,500000,8000000,5000000000];' + `window.playlists.setMapsLoaded=a=>{${readyVar}=a;};`);
 
-//Add playlists command to help message
-newStr = newStr.replace('F21[90][N_B[7][644]](H1N.L77(2535),H1N.L77(1536),false);', 'F21[90][N_B[7][644]](H1N.L77(2535),H1N.L77(1536),false);F21[90].showStatusMessage("/p - commands from playlists mod","#cc3333",false);');
+//Mapload finish variable
+let finishVar = newStr.match(/false\);\}else \{if\([A-Za-z0-9\$_]{3}\[[0-9]+\]\)\{/)[0].split(/[\(\)]/)[2];
+//Inverting the value is important
+patch('[1,10000,25000,100000,500000,8000000,5000000000];', '[1,10000,25000,100000,500000,8000000,5000000000];' + `window.playlists.setMapsFinished=a=>{${finishVar}=!a;};`);
 
-//Remove no maps message when using playlists
-const noMaps = [...new Set(newStr.match(/F$m\(...\....\(1857\)\)/g))];
+//Get some useful functions
+let menuRegex = newStr.match(/== 13\){...\(\);}}/)[0];
+patch(menuRegex, menuRegex + "window.playlists.menuFunctions = this;");
+let toolRegex = newStr.match(/=new [A-Za-z0-9\$_]{1,3}\(this,[A-Za-z0-9\$_]{1,3}\[0\]\[0\],[A-Za-z0-9\$_]{1,3}\[0\]\[1\]\);/);
+patch(toolRegex, toolRegex + "window.playlists.toolFunctions = this;");
 
-for(let message of noMaps) {
-    newStr = newStr.replaceAll(message, `if(document.getElementById("maploadtypedropdowntitle").textContent !== "MY PLAYLISTS")` + message);
-}
+//Big class
+let bigClass = newStr.match(/[A-Z]\[[A-Za-z0-9\$_]{1,3}\[[0-9]+\]\[[0-9]+\]\]\([A-Za-z0-9\$_]{1,3}\[0\]\[0\]\);[A-Za-z0-9\$_]{1,3}\[[0-9]+\]\[[A-Za-z0-9\$_]{1,3}\[[0-9]+\]\[[0-9]+\]\]\([A-Za-z0-9\$_]{1,3}\[[0-9]+\],{m:/)[0][0];
+patch(`function ${bigClass}(){}`, `function ${bigClass}(){};window.playlists.bigClass=${bigClass};`);
+
+
