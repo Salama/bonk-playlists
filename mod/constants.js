@@ -152,6 +152,7 @@ const validatePlaylists = playlists => {
 				typeof(playlist.name) == "string" &&
 				typeof(playlist.description) == "string" &&
 				(typeof(playlist.image) == "string" || playlist.image == undefined) &&
+				playlist.image.substr(0, 5) == "data:" &&
 				playlist.maps.filter(e => {return typeof(e)=="number"}).length == playlist.maps.length
 			))
 				return false;
