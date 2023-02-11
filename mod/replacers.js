@@ -10,7 +10,7 @@ const categoryFunc = newStr.match(/[A-Za-z0-9\$_]{3}\([A-Za-z0-9\$_]{3}\.[A-Za-z
 patch(`function ${categoryFunc}`, `window.playlists.categoryFunc=${categoryFunc};function ${categoryFunc}`);
 
 //Get map loader
-let mapLoader = newStr.match(/function.{0,500}try{\(function\(\){.{1000}/g);
+let mapLoader = newStr.match(/function [A-Za-z0-9\$_]{3}.{0,500}try{\(function\(\){.{1000}/g);
 for(let loader of mapLoader) {
 	if(loader.match("=2")) {
 		mapLoader = loader;

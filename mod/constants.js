@@ -83,7 +83,7 @@ chatObserver = new MutationObserver(e => {
 				if(node.textContent === "* Accepted commands are listed above ") {
 					let helpmsg = document.createElement("div");
 					mutation.target.insertBefore(helpmsg, node.previousSibling);
-					helpmsg.outerHTML = '<div><span class="newbonklobby_chat_status" style="color: rgb(204, 51, 51);">/p - commands from playlists mod</span></div>';
+					helpmsg.outerHTML = '<div><span class="newbonklobby_chat_status" style="color: rgb(181, 48, 48);">/p - commands from playlists mod</span></div>';
 				}
 			}
 		}
@@ -437,15 +437,15 @@ const chatHandler = e => {
 					console.log("Autofav = " + window.playlists.autofav);
 					if(window.playlists.autofav) {
 						e.target.value = "";
-						window.playlists.menuFunctions.showStatusMessage("* Favoriting maps is disabled while autofav is on", "#cc3333");
+						window.playlists.menuFunctions.showStatusMessage("* Favoriting maps is disabled while autofav is on", "#b53030");
 					}
 				}
 				else if(command.startsWith("p") && !Number.isNaN(Number(command.substr(1)))) {
 					e.target.value = "";
 					if(args[0] === "list" && command === "p") {
-						window.playlists.menuFunctions.showStatusMessage("Saved playlists", "#cc3333");
+						window.playlists.menuFunctions.showStatusMessage("Saved playlists", "#b53030");
 						for(let i = 0; i < window.playlists.playlists.length; i++) {
-							window.playlists.menuFunctions.showStatusMessage("* [" + (i+1) + "] " + window.playlists.playlists[i].name, "#cc3333");
+							window.playlists.menuFunctions.showStatusMessage("* [" + (i+1) + "] " + window.playlists.playlists[i].name, "#b53030");
 						}
 						return;
 					}
@@ -454,44 +454,44 @@ const chatHandler = e => {
 					}
 					if(Number.isNaN(parseInt(args[0]))) {
 						// Show help
-						window.playlists.menuFunctions.showStatusMessage("* List of playlist commands:", "#cc3333", true);
-						window.playlists.menuFunctions.showStatusMessage("/p list", "#cc3333", true);
-						window.playlists.menuFunctions.showStatusMessage("/p [index]", "#cc3333", true);
+						window.playlists.menuFunctions.showStatusMessage("* List of playlist commands:", "#b53030", true);
+						window.playlists.menuFunctions.showStatusMessage("/p list", "#b53030", true);
+						window.playlists.menuFunctions.showStatusMessage("/p [index]", "#b53030", true);
 						return;
 					}
 					
 					if(args[0] < 1 || args[0] > window.playlists.playlists.length) {
 						if(window.playlists.playlists.length === 0) {
-							window.playlists.menuFunctions.showStatusMessage("You don't have any playlists!", "#cc3333");
+							window.playlists.menuFunctions.showStatusMessage("You don't have any playlists!", "#b53030");
 							return;
 						}
-						window.playlists.menuFunctions.showStatusMessage("Playlist index must be between 1 and " + (window.playlists.playlists.length), "#cc3333");
+						window.playlists.menuFunctions.showStatusMessage("Playlist index must be between 1 and " + (window.playlists.playlists.length), "#b53030");
 						return;
 					}
 
 					let gameSettings = window.playlists.toolFunctions.getGameSettings();
 					
 					if(!gameSettings.map.m.pub && gameSettings.map.dbv == 2) {
-						window.playlists.menuFunctions.showStatusMessage("You can't add a private map to a playlist! If it is a Bonk 1 map, *you* need to select the map from Bonk 1 map list without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added or removed.", "#cc3333");
+						window.playlists.menuFunctions.showStatusMessage("You can't add a private map to a playlist! If it is a Bonk 1 map, *you* need to select the map from Bonk 1 map list without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added or removed.", "#b53030");
 						return;
 					}
 
 					if(gameSettings.map.m.dbv === 2 && gameSettings.map.m.date !== undefined && gameSettings.map.m.date !== null && gameSettings.map.m.date !== "") {
 						if(window.playlists.playlists[args[0] - 1].maps.includes(gameSettings.map.m.dbid)) {
 							window.playlists.playlists[args[0] - 1].maps.splice(window.playlists.playlists[args[0] - 1].maps.indexOf(gameSettings.map.m.dbid), 1);
-							window.playlists.menuFunctions.showStatusMessage("* Map removed from playlist", "#cc3333", true);
+							window.playlists.menuFunctions.showStatusMessage("* Map removed from playlist", "#b53030", true);
 						}
 						else {
 							// Hacky way to favorite the map
 							e.target.value = "/fav";
 							window.playlists.playlists[args[0] - 1].maps.push(gameSettings.map.m.dbid);
-							window.playlists.menuFunctions.showStatusMessage("* Map added to playlist", "#cc3333", true);
+							window.playlists.menuFunctions.showStatusMessage("* Map added to playlist", "#b53030", true);
 						}
 					}
 					else {
 						if(window.playlists.playlists[args[0] - 1].b1maps.map(e => {return e.id}).includes(gameSettings.map.m.dbid)) {
 							window.playlists.playlists[args[0] - 1].b1maps.splice(window.playlists.playlists[args[0] - 1].b1maps.map(e => {return e.id}).indexOf(gameSettings.map.m.dbid), 1);
-							window.playlists.menuFunctions.showStatusMessage("* Map removed from playlist", "#cc3333", true);
+							window.playlists.menuFunctions.showStatusMessage("* Map removed from playlist", "#b53030", true);
 						}
 						else {
 							let b1map = {
@@ -508,11 +508,11 @@ const chatHandler = e => {
 								publisheddate: gameSettings.map.m.date
 							}
 							if(gameSettings.map.m.date === undefined || gameSettings.map.m.date === null || gameSettings.map.m.date === "" || gameSettings.map.m.vu * 1 != gameSettings.map.m.vu || gameSettings.map.m.vd * 1 != gameSettings.map.m.vd) {
-								window.playlists.menuFunctions.showStatusMessage("* Map could not be added to the playlist! To add Bonk 1 maps, *you* need to select the map from Bonk 1 map list without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added or removed.", "#cc3333", true);
+								window.playlists.menuFunctions.showStatusMessage("* Map could not be added to the playlist! To add Bonk 1 maps, *you* need to select the map from Bonk 1 map list without starting the game. A Bonk 1 map, which is selected from a playlist, cannot be added or removed.", "#b53030", true);
 							}
 							else {
 								window.playlists.playlists[args[0] - 1].b1maps.push(b1map);
-								window.playlists.menuFunctions.showStatusMessage("* Map added to playlist", "#cc3333", true);
+								window.playlists.menuFunctions.showStatusMessage("* Map added to playlist", "#b53030", true);
 							}
 						}
 					}
