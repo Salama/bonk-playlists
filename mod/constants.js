@@ -151,8 +151,9 @@ const validatePlaylists = playlists => {
 				Object.keys(playlist).find(i => !["name","description","image","maps","b1maps"].includes(i)) === undefined &&
 				typeof(playlist.name) == "string" &&
 				typeof(playlist.description) == "string" &&
-				(typeof(playlist.image) == "string" || playlist.image == undefined) &&
-				playlist.image.substr(0, 5) == "data:" &&
+				((typeof(playlist.image) == "string" &&
+				playlist.image.substr(0, 5) == "data:") ||
+				playlist.image == undefined) &&
 				playlist.maps.filter(e => {return typeof(e)=="number"}).length == playlist.maps.length
 			))
 				return false;
