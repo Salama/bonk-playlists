@@ -10,14 +10,8 @@ const categoryFunc = newStr.match(/[A-Za-z0-9\$_]{3}\([A-Za-z0-9\$_]{3}\.[A-Za-z
 patch(`function ${categoryFunc}`, `window.playlists.categoryFunc=${categoryFunc};function ${categoryFunc}`);
 
 //Get map loader
-let mapLoader = newStr.match(/function [A-Za-z0-9\$_]{3}.{0,500}try{\(function\(\){.{1000}/g);
-for(let loader of mapLoader) {
-	if(loader.match("=2")) {
-		mapLoader = loader;
-		break;
-	};
-}
-mapLoader = mapLoader.split("(")[0].split(" ")[1];
+let mapLoader = newStr.match(/maploadwindowsearchinput.{0,200}else if\([A-Za-z0-9\$_]{3}\[0\]\[0\]\[[A-Za-z0-9\$_]{3}\[[0-9]+\][[0-9]+\]\] == [A-Za-z0-9\$_]{3}\.[A-Za-z0-9\$_]{3}\([0-9]+\)\)\{[A-Za-z0-9\$_]{3}\([A-Za-z0-9\$_]{3}\[0\]\[0\]\);[A-Za-z0-9\$_]{3}\[[0-9]+\]=[A-Za-z0-9\$_]{3}\[0\]\[0\]\[[A-Za-z0-9\$_]{3}\[[0-9]+\]\[[0-9]+\]\];\}\}\)/g)[0].match(/[A-Za-z0-9\$_]{3}\([A-Za-z0-9\$_]{3}\[0\]\[0\]\);/)[0].slice(0, 3);
+
 patch(`function ${mapLoader}`, `window.playlists.mapLoader=${mapLoader};function ${mapLoader}`);
 
 //Get token
